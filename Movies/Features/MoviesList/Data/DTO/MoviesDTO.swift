@@ -61,7 +61,8 @@ extension MovieDTO {
             id: id,
             title: title,
             releaseDate: releaseDate,
-            poster: posterPath
+            poster: posterPath,
+            genreIds: genreIds
         )
     }
 }

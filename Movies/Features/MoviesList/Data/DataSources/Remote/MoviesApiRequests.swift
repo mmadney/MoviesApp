@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum MoviesListApiRequests {
+enum MoviesApiRequests {
     case getMoviesGenre
-    case getMoviesList
+    case getMoviesList(page: Int, withGenre: Int?)
 }
 
-extension MoviesListApiRequests: Endpoint {
+extension MoviesApiRequests: Endpoint {
     var base: String {
         return ServerConfig.shared.baseUrl
     }
@@ -39,8 +39,12 @@ extension MoviesListApiRequests: Endpoint {
         switch self {
         case .getMoviesGenre:
             return ServerPaths.gnereMoviesList
-        case .getMoviesList:
-            return ServerPaths.movieDetails + "&page=\(page)"
+        case let .getMoviesList(page, withGenre):
+            var path = "\(ServerPaths.movieList)?page=\(page)"
+            if let withGenre {
+                path += "&with_genres=\(withGenre)"
+            }
+            return path
         }
     }
 }

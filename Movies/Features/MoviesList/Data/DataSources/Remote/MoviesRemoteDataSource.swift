@@ -9,10 +9,13 @@ import Foundation
 
 protocol MoviesRemoteDataSource {
     func getMovieGenre() async throws -> GenresResponseDTO
-    func getMoviesList() async throws -> MoviesResponseDTO
+    func getMoviesList(
+        page: Int,
+        genreId: Int?
+    ) async throws -> MoviesResponseDTO
 }
 
-final class MoviesListRemote: NetworkApi, MoviesRemoteDataSource {
+final class MoviesRemote: NetworkApi, MoviesRemoteDataSource {
     var session: URLSession
 
     init() {
@@ -22,14 +25,20 @@ final class MoviesListRemote: NetworkApi, MoviesRemoteDataSource {
     func getMovieGenre() async throws -> GenresResponseDTO {
         return try await fetch(
             type: GenresResponseDTO.self,
-            with: MoviesListApiRequests.getMoviesGenre
+            with: MoviesApiRequests.getMoviesGenre
         )
     }
 
-    func getMoviesList() async throws -> MoviesResponseDTO {
+    func getMoviesList(
+        page: Int,
+        genreId: Int?
+    ) async throws -> MoviesResponseDTO {
         return try await fetch(
             type: MoviesResponseDTO.self,
-            with: MoviesListApiRequests.getMoviesList
+            with: MoviesApiRequests.getMoviesList(
+                page: page,
+                withGenre: genreId
+            )
         )
     }
 }
