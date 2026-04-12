@@ -113,4 +113,24 @@ final class MoviesListViewModel: ObservableObject {
         visibleMovies = searchMovieUseCase.execute(movies: loadedMovies, query: searchText)
     }
 
+#if DEBUG
+    /// SwiftUI Preview / snapshot data — no network (avoids TLS errors in Preview canvas).
+    static func makePreview() -> MoviesListViewModel {
+        let vm = MoviesListViewModel()
+        vm.genres = [
+            Genre(id: 28, name: "Action"),
+            Genre(id: 12, name: "Adventure"),
+            Genre(id: 16, name: "Animation")
+        ]
+        vm.loadedMovies = [
+            Movie(id: 1, title: "Ratatouille", releaseDate: "2007-06-29", poster: nil, genreIds: [16]),
+            Movie(id: 2, title: "Toy Story", releaseDate: "1995-11-22", poster: nil, genreIds: [16]),
+            Movie(id: 3, title: "The Boss Baby: Family Business", releaseDate: "2021-07-02", poster: nil, genreIds: [16, 35]),
+            Movie(id: 4, title: "Tangled", releaseDate: "2010-11-24", poster: nil, genreIds: [16, 10751])
+        ]
+        vm.hasLoadedOnce = true
+        vm.applyFilters()
+        return vm
+    }
+#endif
 }
