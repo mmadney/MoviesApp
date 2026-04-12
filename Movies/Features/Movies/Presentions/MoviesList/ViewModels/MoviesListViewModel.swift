@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Factory
 
 @MainActor
 final class MoviesListViewModel: ObservableObject {
@@ -23,32 +24,18 @@ final class MoviesListViewModel: ObservableObject {
     @Published private(set) var isLoading: Bool = false
     @Published private(set) var errorMessage: String?
 
-    private let getGenresUseCase: GetGenresUseCase
-    private let getMoviesUseCase: GetMoviesUseCase
+    @LazyInjected(\.getGeneresUseCase) var getGenresUseCase
+    @LazyInjected(\.getMoviesUseCase) var getMoviesUseCase
 
     // Full loaded list for current genre selection; search filters from this.
     private var loadedMovies: [Movie] = []
     private var currentPage: Int = 1
     private var hasLoadedOnce = false
     private var hasMorePages = true
+    
 
-    // Default app wiring for production usage.
-    convenience init() {
-        let repo = MoviesRepoImp(
-            remote: MoviesRemote(),
-            local: MoviesLocal(localStorage: JsonLocalStorages())
-        )
-        self.init(
-            getGenresUseCase: GetGenresUseCase(repo: repo),
-            getMoviesUseCase: GetMoviesUseCase(repo: repo)
-        )
-    }
 
-    init(getGenresUseCase: GetGenresUseCase, getMoviesUseCase: GetMoviesUseCase) {
-        self.getGenresUseCase = getGenresUseCase
-        self.getMoviesUseCase = getMoviesUseCase
-    }
-
+    
     // Loads first data only once when the screen appears.
     func onAppear() async {
         guard !hasLoadedOnce else { return }
