@@ -11,13 +11,11 @@ import Factory
 
 @MainActor
 final class MoviesListViewModel: ObservableObject {
-    // Search text from UI; each change reapplies local filtering.
     @Published var searchText: String = "" {
         didSet {
             applyFilters()
         }
     }
-    // Data exposed to the view.
     @Published private(set) var genres: [Genre] = []
     @Published private(set) var selectedGenreId: Int? = nil
     @Published private(set) var visibleMovies: [Movie] = []
@@ -26,31 +24,28 @@ final class MoviesListViewModel: ObservableObject {
 
     @LazyInjected(\.getGeneresUseCase) var getGenresUseCase
     @LazyInjected(\.getMoviesUseCase) var getMoviesUseCase
+    @LazyInjected(\.getUniqueMoviesUseCase) var getUniqueMoviesUseCase
+    @LazyInjected(\.searchMovieUseCase) var searchMovieUseCase
 
-    // Full loaded list for current genre selection; search filters from this.
+   
     private var loadedMovies: [Movie] = []
     private var currentPage: Int = 1
     private var hasLoadedOnce = false
     private var hasMorePages = true
     
 
-
-    
-    // Loads first data only once when the screen appears.
     func onAppear() async {
         guard !hasLoadedOnce else { return }
         hasLoadedOnce = true
         await loadInitialData()
     }
 
-    // Changes selected genre then reloads movies from page 1.
     func selectGenre(_ genreId: Int?) async {
         guard selectedGenreId != genreId else { return }
         selectedGenreId = genreId
         await resetAndReloadMovies()
     }
 
-    // Infinite scroll trigger when user reaches the last visible card.
     func loadNextPageIfNeeded(currentMovie: Movie) async {
         guard !isLoading, hasMorePages else { return }
         guard let lastMovie = visibleMovies.last else { return }
@@ -58,7 +53,6 @@ final class MoviesListViewModel: ObservableObject {
         await loadMoviesPage(page: currentPage + 1, reset: false)
     }
 
-    // Fetches genres and the first movie page in parallel for faster startup.
     private func loadInitialData() async {
         isLoading = true
         errorMessage = nil
@@ -73,7 +67,7 @@ final class MoviesListViewModel: ObservableObject {
 
             genres = fetchedGenres
             currentPage = 1
-            loadedMovies = uniqueMovies(from: fetchedMovies)
+            loadedMovies = getUniqueMoviesUseCase.execute(fetchedMovies)
             hasMorePages = !fetchedMovies.isEmpty
             applyFilters()
         } catch {
@@ -81,7 +75,7 @@ final class MoviesListViewModel: ObservableObject {
         }
     }
 
-    // Clears current paging state when user changes genre.
+
     private func resetAndReloadMovies() async {
         currentPage = 1
         hasMorePages = true
@@ -90,13 +84,12 @@ final class MoviesListViewModel: ObservableObject {
         await loadMoviesPage(page: 1, reset: true)
     }
 
-    // Loads one page from repository and merges/de-duplicates results.
+ 
     private func loadMoviesPage(page: Int, reset: Bool) async {
         guard !isLoading else { return }
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
-
         do {
             let fetched = try await getMoviesUseCase.execute(page: page, genreId: selectedGenreId)
 
@@ -106,7 +99,7 @@ final class MoviesListViewModel: ObservableObject {
                 loadedMovies.append(contentsOf: fetched)
             }
 
-            loadedMovies = uniqueMovies(from: loadedMovies)
+            loadedMovies = getUniqueMoviesUseCase.execute(loadedMovies)
             currentPage = page
             hasMorePages = !fetched.isEmpty
             applyFilters()
@@ -115,25 +108,9 @@ final class MoviesListViewModel: ObservableObject {
         }
     }
 
-    // Applies local text search to already loaded movies.
+   
     private func applyFilters() {
-        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-
-        if query.isEmpty {
-            visibleMovies = loadedMovies
-        } else {
-            visibleMovies = loadedMovies.filter { movie in
-                movie.title.lowercased().contains(query)
-            }
-        }
+        visibleMovies = searchMovieUseCase.execute(movies: loadedMovies, query: searchText)
     }
 
-    // Removes duplicates that can happen across pages/offline cache.
-    private func uniqueMovies(from movies: [Movie]) -> [Movie] {
-        var map: [Int: Movie] = [:]
-        for movie in movies {
-            map[movie.id] = movie
-        }
-        return map.values.sorted(by: { $0.id < $1.id })
-    }
 }

@@ -45,8 +45,17 @@ extension Container {
         let usecase = GetMoviesUseCase(repo: movieRepository())
         return self { usecase }
     }
-    
-    
+
+    var getUniqueMoviesUseCase: Factory<GetUniqueMoviesUseCase> {
+        let usecase = GetUniqueMoviesUseCase()
+        return self { usecase }
+    }
+
+    var searchMovieUseCase: Factory<SearchMovieUseCase> {
+        let usecase = SearchMovieUseCase()
+        return self { usecase }
+    }
+
     var getGeneresUseCase: Factory<GetGenresUseCase> {
         let usecase = GetGenresUseCase(repo: movieRepository())
         return self { usecase }
