@@ -26,15 +26,6 @@ struct MoviesListView: View {
 
             MoviesGrid(viewModel: viewModel)
 
-            if viewModel.isLoading {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                        .tint(ThemeColor.yellow)
-                    Spacer()
-                }
-                .padding(.vertical, 12)
-            }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 12)
@@ -48,5 +39,4 @@ struct MoviesListView: View {
 
 #Preview {
     MoviesListView()
-        .preferredColorScheme(.dark)
 }

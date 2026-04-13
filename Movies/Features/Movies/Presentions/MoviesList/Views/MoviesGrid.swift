@@ -18,36 +18,47 @@ struct MoviesGrid: View {
 
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: gridColumns, spacing: 12) {
-                ForEach(viewModel.visibleMovies, id: \.id) { movie in
-                    VStack(alignment: .leading, spacing: 0) {
-                        KFImage.url(movie.poster?.posterURL())
-                            .placeholder({
-                                placeholderImage
-                            })
-                            .resizable()
-                            .frame(height: 230)
-                            .frame(maxWidth: .infinity)
-                            .clipped()
-
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(movie.title)
-                                .customFont(.subTitle, ThemeColor.white)
-                                .lineLimit(2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
-                            Text(String(movie.releaseDate.prefix(4)))
-                                .customFont(.label0, ThemeColor.white)
+            VStack(alignment: .leading, spacing: 10) {
+                LazyVGrid(columns: gridColumns, spacing: 12) {
+                    ForEach(viewModel.visibleMovies, id: \.id) { movie in
+                        VStack(alignment: .leading, spacing: 0) {
+                            KFImage.url(movie.poster?.posterURL())
+                                .placeholder({
+                                    placeholderImage
+                                })
+                                .resizable()
+                                .frame(height: 230)
+                                .frame(maxWidth: .infinity)
+                                .clipped()
+                            
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(movie.title)
+                                    .customFont(.subTitle, ThemeColor.white)
+                                    .lineLimit(2)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                
+                                Text(String(movie.releaseDate.prefix(4)))
+                                    .customFont(.label0, ThemeColor.white)
+                            }
+                            .padding(10)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(ThemeColor.darkGray.opacity(0.35))
                         }
-                        .padding(10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(ThemeColor.darkGray.opacity(0.35))
+                        .background(ThemeColor.darkGray.opacity(0.22))
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .task {
+                            await viewModel.loadNextPageIfNeeded(currentMovie: movie)
+                        }
                     }
-                    .background(ThemeColor.darkGray.opacity(0.22))
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                    .task {
-                        await viewModel.loadNextPageIfNeeded(currentMovie: movie)
+                }
+                if viewModel.isLoading {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                            .tint(ThemeColor.yellow)
+                        Spacer()
                     }
+                    .padding(.vertical, 12)
                 }
             }
         }
