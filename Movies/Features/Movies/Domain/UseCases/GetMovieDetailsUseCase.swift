@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct GetMovieDetailsUseCase {
+protocol GetMovieDetailsUseCase {
+    func execute(movieId: Int) async throws -> MovieDetails
+}
+
+class GetMovieDetailsUseCaseImp: GetMovieDetailsUseCase {
     private let repo: MoviesRepo
 
     init(repo: MoviesRepo) {
@@ -18,3 +22,5 @@ struct GetMovieDetailsUseCase {
         return try await repo.getMovieDetails(movieId: movieId)
     }
 }
+
+

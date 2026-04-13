@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct SearchMovieUseCase {
+protocol SearchMovieUseCase {
+    func execute(movies: [Movie], query: String) -> [Movie]
+}
+
+class SearchMovieUseCaseImp: SearchMovieUseCase {
     func execute(movies: [Movie], query: String) -> [Movie] {
         let normalizedQuery = query
             .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -22,3 +26,5 @@ struct SearchMovieUseCase {
         }
     }
 }
+
+

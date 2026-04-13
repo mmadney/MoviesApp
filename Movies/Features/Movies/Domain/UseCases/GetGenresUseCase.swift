@@ -7,7 +7,11 @@
 
 import Foundation
 
-struct GetGenresUseCase {
+protocol GetGenresUseCase {
+    func execute() async throws -> [Genre]
+}
+
+class GetGenresUseCaseImp: GetGenresUseCase {
     private let repo: MoviesRepo
 
     init(repo: MoviesRepo) {
@@ -18,3 +22,6 @@ struct GetGenresUseCase {
         return try await repo.getGenres()
     }
 }
+
+
+

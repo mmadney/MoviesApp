@@ -42,22 +42,22 @@ extension Container {
 
     // UseCases
     var getMoviesUseCase: Factory<GetMoviesUseCase> {
-        let usecase = GetMoviesUseCase(repo: movieRepository())
+        let usecase = GetMoviesUseCaseImp(repo: movieRepository())
         return self { usecase }
     }
 
     var searchMovieUseCase: Factory<SearchMovieUseCase> {
-        let usecase = SearchMovieUseCase()
+        let usecase = SearchMovieUseCaseImp()
         return self { usecase }
     }
 
     var getGeneresUseCase: Factory<GetGenresUseCase> {
-        let usecase = GetGenresUseCase(repo: movieRepository())
+        let usecase = GetGenresUseCaseImp(repo: movieRepository())
         return self { usecase }
     }
 
     var getMovieDetailsUseCase: Factory<GetMovieDetailsUseCase> {
-        let usecase = GetMovieDetailsUseCase(repo: movieRepository())
+        let usecase = GetMovieDetailsUseCaseImp(repo: movieRepository())
         return self { usecase }
     }
 }
