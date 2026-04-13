@@ -46,4 +46,9 @@ final class MoviesRepoImp: MoviesRepo {
             throw error
         }
     }
+
+    func getMovieDetails(movieId: Int) async throws -> MovieDetails {
+        let remoteResponse = try await remote.getMovieDetails(movieId: movieId)
+        return remoteResponse.toDomain()
+    }
 }

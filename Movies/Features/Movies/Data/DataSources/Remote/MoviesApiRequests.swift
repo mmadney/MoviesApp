@@ -10,6 +10,7 @@ import Foundation
 enum MoviesApiRequests {
     case getMoviesGenre
     case getMoviesList(page: Int, withGenre: Int?)
+    case getMovieDetails(movieId: Int)
 }
 
 extension MoviesApiRequests: Endpoint {
@@ -23,6 +24,8 @@ extension MoviesApiRequests: Endpoint {
             return .GET
         case .getMoviesList:
             return .GET
+        case .getMovieDetails:
+            return .GET
         }
     }
 
@@ -31,6 +34,8 @@ extension MoviesApiRequests: Endpoint {
         case .getMoviesGenre:
             return nil
         case .getMoviesList:
+            return nil
+        case .getMovieDetails:
             return nil
         }
     }
@@ -45,6 +50,8 @@ extension MoviesApiRequests: Endpoint {
                 path += "&with_genres=\(withGenre)"
             }
             return path
+        case let .getMovieDetails(movieId):
+            return "\(ServerPaths.movieDetails)\(movieId)"
         }
     }
 }

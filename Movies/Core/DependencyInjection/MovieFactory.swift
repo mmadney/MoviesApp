@@ -55,4 +55,9 @@ extension Container {
         let usecase = GetGenresUseCase(repo: movieRepository())
         return self { usecase }
     }
+
+    var getMovieDetailsUseCase: Factory<GetMovieDetailsUseCase> {
+        let usecase = GetMovieDetailsUseCase(repo: movieRepository())
+        return self { usecase }
+    }
 }

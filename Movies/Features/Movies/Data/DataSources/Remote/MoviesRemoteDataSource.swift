@@ -13,6 +13,7 @@ protocol MoviesRemoteDataSource {
         page: Int,
         genreId: Int?
     ) async throws -> MoviesResponseDTO
+    func getMovieDetails(movieId: Int) async throws -> MovieDetailsDTO
 }
 
 final class MoviesRemote: NetworkApi, MoviesRemoteDataSource {
@@ -39,6 +40,13 @@ final class MoviesRemote: NetworkApi, MoviesRemoteDataSource {
                 page: page,
                 withGenre: genreId
             )
+        )
+    }
+
+    func getMovieDetails(movieId: Int) async throws -> MovieDetailsDTO {
+        return try await fetch(
+            type: MovieDetailsDTO.self,
+            with: MoviesApiRequests.getMovieDetails(movieId: movieId)
         )
     }
 }

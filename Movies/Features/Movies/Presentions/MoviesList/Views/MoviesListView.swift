@@ -31,6 +31,7 @@ struct MoviesListView: View {
         .padding(.vertical, 12)
         .frame(maxHeight: .infinity, alignment: .top)
         .background(ThemeColor.background.ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             await viewModel.onAppear()
         }
