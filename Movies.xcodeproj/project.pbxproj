@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		F6DF21532F8C52CA00676E9D /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = F6DF21522F8C52CA00676E9D /* Factory */; };
 		F6DF21582F8C53AF00676E9D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = F6DF21572F8C53AF00676E9D /* Kingfisher */; };
+		F6DF215D2F8C53B400676E9D /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = F6DF21522F8C52CA00676E9D /* Factory */; };
+		F6DF215E2F8C53B500676E9D /* FactoryTesting in Frameworks */ = {isa = PBXBuildFile; productRef = F6DF21592F8C53B000676E9D /* FactoryTesting */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +68,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6DF215D2F8C53B400676E9D /* Factory in Frameworks */,
+				F6DF215E2F8C53B500676E9D /* FactoryTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,6 +156,8 @@
 			);
 			name = MoviesTests;
 			packageProductDependencies = (
+				F6DF21522F8C52CA00676E9D /* Factory */,
+				F6DF21592F8C53B000676E9D /* FactoryTesting */,
 			);
 			productName = MoviesTests;
 			productReference = F6DF20292F8BB38500676E9D /* MoviesTests.xctest */;
@@ -491,7 +497,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Movies.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Movies";
 			};
@@ -513,7 +519,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Movies.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Movies";
 			};
@@ -629,6 +635,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F6DF21562F8C53A600676E9D /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		F6DF21592F8C53B000676E9D /* FactoryTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6DF20F62F8C4C1600676E9D /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryTesting;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

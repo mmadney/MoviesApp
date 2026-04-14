@@ -19,8 +19,8 @@ protocol MoviesRemoteDataSource {
 final class MoviesRemote: NetworkApi, MoviesRemoteDataSource {
     var session: URLSession
 
-    init() {
-        session = URLSession(configuration: .default)
+    init(session: URLSession = URLSession(configuration: .default)) {
+        self.session = session
     }
 
     func getMovieGenre() async throws -> GenresResponseDTO {
