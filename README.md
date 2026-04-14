@@ -30,7 +30,7 @@ A SwiftUI movie browsing app built with a feature-first Clean Architecture style
 ```text
 Movies/
 ├── docs/
-│   └── demo.gif          (add your GIF here)
+│   └── demo.gif          
 ├── Movies/
 │   ├── Core/
 │   │   ├── DependencyInjection/
