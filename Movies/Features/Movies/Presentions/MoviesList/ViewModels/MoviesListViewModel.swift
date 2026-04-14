@@ -76,7 +76,6 @@ final class MoviesListViewModel: ObservableObject {
     
     
     private func resetAndReloadMovies() async {
-        
         currentPage = 1
         hasMorePages = true
         loadedMovies = []
