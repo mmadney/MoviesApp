@@ -8,6 +8,7 @@
 @testable import Movies
 import Testing
 
+@MainActor
 struct SearchMovieUseCaseTests {
 
     private func sampleMovies() -> [Movie] {

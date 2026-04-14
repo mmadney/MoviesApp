@@ -12,26 +12,35 @@ import Testing
 
 @testable import Movies
 
+@MainActor
 struct MoviesListViewModelTests {
-
-    func testLoaded() async {
+    @Test func testLoaded() async {
         registerSuccessMocks()
-        let model = MoviesListViewModel()
-        await model.onAppear()
+        let sut = MoviesListViewModel()
+        await sut.onAppear()
 
-        #expect(model.errorMessage == nil)
-        #expect(model.isLoading == false)
-        #expect(model.genres.map(\.id) == GenreMocks.sample.map(\.id))
-        #expect(model.visibleMovies.map(\.id) == MovieMocks.sample.map(\.id))
+        #expect(sut.errorMessage == nil)
+        #expect(sut.isLoading == false)
+        #expect(sut.genres.map(\.id) == GenreMocks.sample.map(\.id))
+        #expect(sut.visibleMovies.map(\.id) == MovieMocks.sample.map(\.id))
     }
 
-    @Test @MainActor
-    func testEmptyMovies() async {
-        Container.shared.getGeneresUseCase.register { GenresSuccessStub() }
-        Container.shared.getMoviesUseCase.register {
-            MoviesPageStub(movies: [], endsAfterFirstPage: true, filterByGenreId: true)
-        }
-        Container.shared.searchMovieUseCase.register { SearchFilterStub() }
+    @Test func testSelectGenre() async {
+        registerSuccessMocks()
+        let sut = MoviesListViewModel()
+
+        await sut.selectGenre(12)
+
+        #expect(sut.selectedGenreId == 12)
+        #expect(sut.visibleMovies.count == 2)
+    }
+
+    @Test func testEmptyMovies() async {
+        registerMocksWithSomeParamtersMovieUseCase(
+            movies: [],
+            endsAfterFirstPage: true,
+            filterByGenreId: true
+        )
 
         let model = MoviesListViewModel()
         await model.onAppear()
@@ -41,11 +50,14 @@ struct MoviesListViewModelTests {
         #expect(model.genres.isEmpty == false)
     }
 
-    @Test @MainActor
-    func testErrors() async {
-        Container.shared.getGeneresUseCase.register { GenresThrowingStub() }
-        Container.shared.getMoviesUseCase.register { MoviesPageStub.sample() }
-        Container.shared.searchMovieUseCase.register { SearchFilterStub() }
+    @Test func testErrors() async {
+        registerMocksWithSomeParamtersGenreUseCase(result: .failure(
+            NSError(
+                domain: "MoviesTests",
+                code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "Some Error"]
+            )
+        ))
 
         let model = MoviesListViewModel()
         await model.onAppear()
@@ -54,8 +66,7 @@ struct MoviesListViewModelTests {
         #expect(model.visibleMovies.isEmpty)
     }
 
-    @Test @MainActor
-    func testSearchFiltersVisibleMovies() async {
+    @Test func testSearchFiltersVisibleMovies() async {
         registerSuccessMocks()
         let model = MoviesListViewModel()
         await model.onAppear()
@@ -68,64 +79,47 @@ struct MoviesListViewModelTests {
 }
 
 private func registerSuccessMocks() {
-    Container.shared.getGeneresUseCase.register { GenresSuccessStub() }
-    Container.shared.getMoviesUseCase.register { MoviesPageStub.sample() }
-    Container.shared.searchMovieUseCase.register { SearchFilterStub() }
-}
-
-private struct GenresSuccessStub: GetGenresUseCase {
-    func execute() async throws -> [Genre] {
-        GenreMocks.sample
+    Container.shared.getGeneresUseCase.register { @MainActor in
+        MockGetGenresUseCase()
+    }
+    
+    Container.shared.getMoviesUseCase.register { @MainActor in
+        MockGetMoviesUseCase()
+    }
+    
+    Container.shared.searchMovieUseCase.register { @MainActor in
+        MockSearchMovieUseCase()
     }
 }
 
-private struct GenresThrowingStub: GetGenresUseCase {
-    func execute() async throws -> [Genre] {
-        throw NSError(
-            domain: "MoviesTests",
-            code: 1,
-            userInfo: [NSLocalizedDescriptionKey: "Some Error"]
-        )
+private func registerMocksWithSomeParamtersGenreUseCase(result: Result<[Genre], Error>) {
+    Container.shared.getGeneresUseCase.register { @MainActor in
+        MockGetGenresUseCase(result: result)
+    }
+
+    Container.shared.getMoviesUseCase.register { @MainActor in
+        MockGetMoviesUseCase()
+    }
+
+    Container.shared.searchMovieUseCase.register { @MainActor in
+        MockSearchMovieUseCase()
     }
 }
 
-private struct MoviesPageStub: GetMoviesUseCase {
-    let movies: [Movie]
-    let endsAfterFirstPage: Bool
-    let filterByGenreId: Bool
-
-    static func sample() -> MoviesPageStub {
-        MoviesPageStub(
-            movies: MovieMocks.sample,
-            endsAfterFirstPage: true,
-            filterByGenreId: true
-        )
+private func registerMocksWithSomeParamtersMovieUseCase(movies: [Movie],
+                                                        endsAfterFirstPage: Bool,
+                                                        filterByGenreId: Bool) {
+    Container.shared.getGeneresUseCase.register { @MainActor in
+        MockGetGenresUseCase()
     }
 
-    func execute(page: Int, genreId: Int?) async throws -> [Movie] {
-        if endsAfterFirstPage && page > 1 {
-            return []
-        }
-        var result = movies
-        if filterByGenreId, let genreId {
-            result = result.filter { $0.genreIds.contains(genreId) }
-        }
-        return result
+    Container.shared.getMoviesUseCase.register { @MainActor in
+        MockGetMoviesUseCase(movies: movies,
+                             endsAfterFirstPage: endsAfterFirstPage,
+                             filterByGenreId: filterByGenreId)
     }
-}
 
-private struct SearchFilterStub: SearchMovieUseCase {
-    func execute(movies: [Movie], query: String) -> [Movie] {
-        let normalizedQuery = query
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased()
-
-        guard !normalizedQuery.isEmpty else {
-            return movies
-        }
-
-        return movies.filter { movie in
-            movie.title.lowercased().contains(normalizedQuery)
-        }
+    Container.shared.searchMovieUseCase.register { @MainActor in
+        MockSearchMovieUseCase()
     }
 }

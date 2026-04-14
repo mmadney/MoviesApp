@@ -47,6 +47,6 @@ struct MoviesRepoTests {
         // then
         let cacheKey = MoviesCacheKey(page: 1, genreId: nil)
         let expectedMovies = localMock.moviesByPage[cacheKey] ?? []
-        #expect(movies.count == 2)
+        #expect(movies.count == expectedMovies.count)
     }
 }
