@@ -22,7 +22,7 @@ A SwiftUI movie browsing app built with a feature-first Clean Architecture style
 - SwiftUI
 - URLSession networking
 - Factory (dependency injection)
-- XCTest / XCUITest
+- Swift Testing
 - TMDB API
 
 ## Project Structure
