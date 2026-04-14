@@ -12,6 +12,7 @@ import Testing
 
 @testable import Movies
 
+@Suite(.serialized)
 @MainActor
 struct MoviesListViewModelTests {
     @Test func testLoaded() async {
@@ -79,6 +80,7 @@ struct MoviesListViewModelTests {
 }
 
 private func registerSuccessMocks() {
+    Container.shared.manager.reset()
     Container.shared.getGeneresUseCase.register { @MainActor in
         MockGetGenresUseCase()
     }
@@ -93,6 +95,7 @@ private func registerSuccessMocks() {
 }
 
 private func registerMocksWithSomeParamtersGenreUseCase(result: Result<[Genre], Error>) {
+    Container.shared.manager.reset()
     Container.shared.getGeneresUseCase.register { @MainActor in
         MockGetGenresUseCase(result: result)
     }
@@ -109,6 +112,7 @@ private func registerMocksWithSomeParamtersGenreUseCase(result: Result<[Genre], 
 private func registerMocksWithSomeParamtersMovieUseCase(movies: [Movie],
                                                         endsAfterFirstPage: Bool,
                                                         filterByGenreId: Bool) {
+    Container.shared.manager.reset()
     Container.shared.getGeneresUseCase.register { @MainActor in
         MockGetGenresUseCase()
     }
