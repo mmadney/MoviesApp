@@ -6,7 +6,6 @@ A SwiftUI movie browsing app built with a feature-first Clean Architecture style
 
 ![Movies app demo](docs/demo.gif)
 
-Add your screen recording as `docs/demo.gif` (GitHub renders it inline on the repo home page). Record the simulator with **Xcode → Debug → Capture Recorded Video**, or use QuickTime / other tools, then export as GIF (e.g. with [ezgif.com](https://ezgif.com/video-to-gif) or `ffmpeg`).
 
 ## Features
 
